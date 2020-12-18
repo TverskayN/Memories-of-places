@@ -1,0 +1,9 @@
+{% if latest_memories_list %}
+    <ul>
+        {% for memory in latest_memories_list %}
+            <li>{{ memory.name }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>У вас нет ни одного воспоминания</p>
+{% endif %}
