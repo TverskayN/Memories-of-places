@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title>{{ title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+    <script src="https://api-maps.yandex.ru/1.1/index.xml" type="text/javascript"></script>
+
+<script type="text/javascript" charset="utf-8">
+		 var map;
+		 function init () {
+		   map = new YMaps.Map( document.getElementById("YMapsID") );
+		   map.setCenter(new YMaps.GeoPoint(60.598469,56.835981), 15,
+				  YMaps.MapType.MAP);
+
+YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
+                var myHtml = "Значение: " + mEvent.getGeoPoint() +
+					"<br>"+'<form id="formadd" name="formadd_point" method="post"\
+						action="{% url 'memories:save_memory' %}">{% csrf_token %}\
+					<p>Название: <br><input name="namepoint" type="text" size="20" maxlength="80" /></p>\
+					<p>Описание: <br><textarea name="descriptpoint" cols="32" rows="5"></textarea></p>\
+					<input name="pcoord" type="hidden" value="'+mEvent.getGeoPoint()+'" />\
+					<p><input name="subpoint" type="submit" value="Сохранить" /></p></form>';
+                map.openBalloon(mEvent.getGeoPoint(), myHtml);
+});
+
+
+            map.addControl(new YMaps.TypeControl());
+            map.addControl(new YMaps.ToolBar());
+            map.addControl(new YMaps.Zoom());
+
+
+}
+
+		</script>
+	</head>
+
+	<body onload="init();">
+		<div id="YMapsID" style="width:600px; height:400px;"></div>
+		<p></p>
+
+		<form action="{% url 'memories:save_memory' %}" method="post">
+			{% csrf_token %}
+			<p>Название: </p>
+				<input name="namepoint" type="text" size="20" maxlength="80"><br>
+			<p>Описание: <br><textarea name="descriptpoint" cols="32" rows="5"></textarea></p>
+			<input name="pcoord" type="hidden" value="'+mEvent.getGeoPoint()+'" />
+			<p><input name="subpoint" type="submit" value="Сохранить" /></p>
+		</form>
+
+</body>
+</html>
