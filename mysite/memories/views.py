@@ -9,17 +9,21 @@ from .models import Memory
 
 def index(request):
     # Главная страница. Описание сайта и вход через facebook
-    text = "Здравствуйте! Вы находитесь на сайте воспоминаний. \
-        Если вы хотите сохранит или просмотреть свои впечатления о посещаяемых местах, " \
-        "пожалуйста, авторизуйтесь через Facebook"
-    return HttpResponse(text)
+    template = 'memories/index.html'
+    title = "Добро пожаловать!"
+    context = {'title': title}
+    return render(request, template, context)
 
 
 def personal_account(request):
     # Личный кабинет со списком воспоминаний или сообщением об их отсутствии
     latest_memories_list = Memory.objects.order_by('-pub_date')[:5]
     template = 'memories/user.html'
-    context = {'latest_memories_list': latest_memories_list}
+    title = "Ваши воспоминания"
+    context = {
+        'latest_memories_list': latest_memories_list,
+        'title': title
+    }
     return render(request, template, context)
 
 

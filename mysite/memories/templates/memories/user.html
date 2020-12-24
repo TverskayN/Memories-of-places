@@ -1,15 +1,25 @@
-{% if latest_memories_list %}
-    <ul>
-        {% for memory in latest_memories_list %}
-            <li>{{ memory.name }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>У вас нет ни одного воспоминания</p>
-{% endif %}
+{% extends "base.html" %}
+{% block content %}
+    <body>
+    <div class="container">
+        <div class="row">
+            {% if latest_memories_list %}
+                <ul>
+                    {% for memory in latest_memories_list %}
+                        <li>{{ memory.name }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>У вас нет ни одного воспоминания</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <form action="{% url 'memories:form_add_memory' %}">
+                <input type="submit" class="btn btn-success" value="Добавить воспоминание">
+            </form>
+        </div>
+    </div>
 
-<form method="post" action="{% url 'memories:form_add_memory' %}">
-    {% csrf_token %}
-
-    <input type="submit" value="Нажми">
-</form>
+{% endblock %}

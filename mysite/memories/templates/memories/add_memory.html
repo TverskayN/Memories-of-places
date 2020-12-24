@@ -1,10 +1,7 @@
-<html>
-<head>
-    <title>{{ title }}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+{% extends "base.html" %}
 
-
-    <script src="https://api-maps.yandex.ru/1.1/index.xml" type="text/javascript"></script>
+{% block script %}
+<script src="https://api-maps.yandex.ru/1.1/index.xml" type="text/javascript"></script>
 
 <script type="text/javascript" charset="utf-8">
 		 var map;
@@ -15,38 +12,50 @@
 
 YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
                 var myHtml = "Значение: " + mEvent.getGeoPoint() +
-					"<br>"+'<form id="formadd" name="formadd_point" method="post"\
-						action="{% url 'memories:save_memory' %}">{% csrf_token %}\
-					<p>Название: <br><input name="namepoint" type="text" size="20" maxlength="80" /></p>\
-					<p>Описание: <br><textarea name="descriptpoint" cols="32" rows="5"></textarea></p>\
-					<input name="pcoord" type="hidden" value="'+mEvent.getGeoPoint()+'" />\
-					<p><input name="subpoint" type="submit" value="Сохранить" /></p></form>';
+					"<br>";
                 map.openBalloon(mEvent.getGeoPoint(), myHtml);
 });
-
-
             map.addControl(new YMaps.TypeControl());
             map.addControl(new YMaps.ToolBar());
             map.addControl(new YMaps.Zoom());
-
-
 }
+</script>
+{% endblock %}
 
-		</script>
-	</head>
+{% block content %}
+<body onload="init();">
+<h2 align="center">
+	Добавление воспоминаний
+</h2>
+<div class="container">
+	<div class="row">
+		<p>
+			Выберите место на карте и введите название и описание
+		</p>
+	</div>
+</div>
+	<div class="container">
+	  <div class="row">
+		<div class="col">
+			<div id="YMapsID" style="width:600px; height:400px;"></div>
+			<p></p>
+		</div>
 
-	<body onload="init();">
-		<div id="YMapsID" style="width:600px; height:400px;"></div>
-		<p></p>
+		<div class="col">
+	<form action="{% url 'memories:save_memory' %}" method="post">
+		{% csrf_token %}
+		<div class="form-group">
+			<p>Название:</p>
+				<input name="namepoint" class="form-control" type="text"><br>
+		</div>
+		<div class="form-group">
+			<p>Описание: <br><textarea name="descriptpoint" class="form-control"></textarea></p>
 
-		<form action="{% url 'memories:save_memory' %}" method="post">
-			{% csrf_token %}
-			<p>Название: </p>
-				<input name="namepoint" type="text" size="20" maxlength="80"><br>
-			<p>Описание: <br><textarea name="descriptpoint" cols="32" rows="5"></textarea></p>
 			<input name="pcoord" type="hidden" value="'+mEvent.getGeoPoint()+'" />
-			<p><input name="subpoint" type="submit" value="Сохранить" /></p>
-		</form>
-
-</body>
-</html>
+		</div>
+		<p><input name="subpoint" class="btn btn-success" type="submit" value="Сохранить" /></p>
+	</form>
+		</div>
+	  </div>
+	</div>
+{% endblock %}
