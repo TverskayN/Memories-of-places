@@ -1,10 +1,11 @@
 import logging
 
-from django.http import HttpResponse
-from django.template import loader
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 
 from .models import Memory
+from .forms import AddMemoryForm
 
 
 def index(request):
@@ -31,13 +32,25 @@ def form_add_memory(request):
     # Форма добавления воспоминания
     template = 'memories/add_memory.html'
     title = "Добавление воспоминания"
-    context = {'title': title}
+    form = AddMemoryForm()
+    context = {'title': title, 'form': form}
     return render(request, template, context)
 
 
 def save_memory(request):
     if request.method == 'POST':
-        location = request.POST.get('searchTextField')
-        print(location)
-    template = 'memories/user.html'
-    return render(request, template)
+        form = AddMemoryForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['geo_point']:
+                geo_point = form.cleaned_data['geo_point']
+                location_latitude, location_longitude = geo_point.split(',')
+                location_name = form.cleaned_data['location_name']
+                comment = form.cleaned_data['comment']
+                print(location_latitude, location_longitude, location_name, comment)
+                return HttpResponseRedirect(reverse('memories:personal_account'))
+    else:
+        form = AddMemoryForm()
+    return render(request, 'memories/add_memory.html', {
+                'error_message': "Выберите место на карте",
+                'form': form,
+                })

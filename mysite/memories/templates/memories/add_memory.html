@@ -14,6 +14,7 @@ YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
                 var myHtml = "Значение: " + mEvent.getGeoPoint() +
 					"<br>";
                 map.openBalloon(mEvent.getGeoPoint(), myHtml);
+                document.getElementById('point').value = mEvent.getGeoPoint();
 });
             map.addControl(new YMaps.TypeControl());
             map.addControl(new YMaps.ToolBar());
@@ -42,19 +43,17 @@ YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
 		</div>
 
 		<div class="col">
-	<form action="{% url 'memories:save_memory' %}" method="post">
-		{% csrf_token %}
-		<div class="form-group">
-			<p>Название:</p>
-				<input name="namepoint" class="form-control" type="text"><br>
-		</div>
-		<div class="form-group">
-			<p>Описание: <br><textarea name="descriptpoint" class="form-control"></textarea></p>
-
-			<input name="pcoord" type="hidden" value="'+mEvent.getGeoPoint()+'" />
-		</div>
-		<p><input name="subpoint" class="btn btn-success" type="submit" value="Сохранить" /></p>
-	</form>
+			{% if error_message %}
+                <p>
+                    {{ error_message }}
+                </p>
+            {% endif %}
+			<form action="{% url 'memories:save_memory' %}" method="post">
+				{% csrf_token %}
+				{{ form }}
+				<br />
+				<input name="submit" class="btn btn-success" type="submit" value="Сохранить" />
+			</form>
 		</div>
 	  </div>
 	</div>
