@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script src="https://api-maps.yandex.ru/1.1/index.xml" type="text/javascript"></script>
+
+<script type="text/javascript" charset="utf-8">
+		 var map;
+		 function init () {
+		   map = new YMaps.Map( document.getElementById("YMapsID") );
+		   map.setCenter(new YMaps.GeoPoint(60.598469,56.835981), 15,
+				  YMaps.MapType.MAP);
+
+YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
+                var myHtml = "Значение: " + mEvent.getGeoPoint() +
+					"<br>";
+                map.openBalloon(mEvent.getGeoPoint(), myHtml);
+                document.getElementById('point').value = mEvent.getGeoPoint();
+});
+            map.addControl(new YMaps.TypeControl());
+            map.addControl(new YMaps.ToolBar());
+            map.addControl(new YMaps.Zoom());
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<body onload="init();">
+<h2 align="center">
+	Добавление воспоминаний
+</h2>
+<div class="container">
+	<div class="row">
+		<p>
+			Выберите место на карте и введите название и описание
+		</p>
+	</div>
+</div>
+	<div class="container">
+	  <div class="row">
+		<div class="col">
+			<div id="YMapsID" style="width:600px; height:400px;"></div>
+			<p></p>
+		</div>
+
+		<div class="col">
+			{% if error_message %}
+                <p>
+                    {{ error_message }}
+                </p>
+            {% endif %}
+			<form action="{% url 'memories:save_memory' %}" method="post">
+				{% csrf_token %}
+				{{ form }}
+				<br />
+				<input name="submit" class="btn btn-success" type="submit" value="Сохранить" />
+			</form>
+		</div>
+	  </div>
+	</div>
+{% endblock %}
