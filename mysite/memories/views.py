@@ -2,9 +2,10 @@ import logging
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone
 from django.urls import reverse
 
-from .models import Memory
+from .models import Memory, User
 from .forms import AddMemoryForm
 
 
@@ -18,7 +19,7 @@ def index(request):
 
 def personal_account(request):
     # Личный кабинет со списком воспоминаний или сообщением об их отсутствии
-    latest_memories_list = Memory.objects.order_by('-pub_date')[:5]
+    latest_memories_list = Memory.objects.all()
     template = 'memories/user.html'
     title = "Ваши воспоминания"
     context = {
@@ -38,6 +39,7 @@ def form_add_memory(request):
 
 
 def save_memory(request):
+    # Проверка запонениия формы и сохранение воспоминания в БД
     if request.method == 'POST':
         form = AddMemoryForm(request.POST)
         if form.is_valid():
@@ -46,7 +48,16 @@ def save_memory(request):
                 location_latitude, location_longitude = geo_point.split(',')
                 location_name = form.cleaned_data['location_name']
                 comment = form.cleaned_data['comment']
-                print(location_latitude, location_longitude, location_name, comment)
+
+                # Сохранение данных в БД
+                memory = Memory(
+                    location_latitude=location_latitude,
+                    location_longitude=location_longitude,
+                    location_name=location_name,
+                    comment=comment,
+                    user_id=1,
+                )
+                memory.save()
                 return HttpResponseRedirect(reverse('memories:personal_account'))
     else:
         form = AddMemoryForm()

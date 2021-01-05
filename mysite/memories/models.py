@@ -25,10 +25,6 @@ class Memory(models.Model):
     location_latitude = models.DecimalField(decimal_places=3, max_digits=8)
     location_longitude = models.DecimalField(decimal_places=3, max_digits=8)
     comment = models.TextField()
-    pub_date = models.DateTimeField('date_published')
 
     def __str__(self):
         return self.location_name
-
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)

@@ -3,12 +3,33 @@
     <body>
     <div class="container">
         <div class="row">
+            <p>Имя и фото пользователя</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
             {% if latest_memories_list %}
-                <ul>
+                <h3 align="center">Ваши воспоминания</h3> <br />
+                <table class="table table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">Широта</th>
+                      <th scope="col">Долгота</th>
+                      <th scope="col">Название</th>
+                      <th scope="col">Описание</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     {% for memory in latest_memories_list %}
-                        <li>{{ memory.name }}</li>
+                        <tr>
+                            <td>{{ memory.location_latitude }}</td>
+                            <td>{{ memory.location_longitude }}</td>
+                            <td>{{ memory.location_name }}</td>
+                            <td>{{ memory.comment }}</td>
+                        </tr>
                     {% endfor %}
-                </ul>
+                  </tbody>
+                </table>
             {% else %}
                 <p>У вас нет ни одного воспоминания</p>
             {% endif %}
