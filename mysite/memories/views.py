@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.urls import reverse
 
-from .models import Memory, User
+from .models import Memory
 from .forms import AddMemoryForm
 
 
@@ -44,20 +44,8 @@ def save_memory(request):
         form = AddMemoryForm(request.POST)
         if form.is_valid():
             if form.cleaned_data['geo_point']:
-                geo_point = form.cleaned_data['geo_point']
-                location_latitude, location_longitude = geo_point.split(',')
-                location_name = form.cleaned_data['location_name']
-                comment = form.cleaned_data['comment']
-
-                # Сохранение данных в БД
-                memory = Memory(
-                    location_latitude=location_latitude,
-                    location_longitude=location_longitude,
-                    location_name=location_name,
-                    comment=comment,
-                    user_id=1,
-                )
-                memory.save()
+                location_latitude, location_longitude, location_name, comment = get_new_nemory(form)
+                save_new_memory_in_database(location_latitude, location_longitude, location_name, comment)
                 return HttpResponseRedirect(reverse('memories:personal_account'))
     else:
         form = AddMemoryForm()
@@ -65,3 +53,29 @@ def save_memory(request):
                 'error_message': "Выберите место на карте",
                 'form': form,
                 })
+
+
+def get_new_nemory(form):
+    # Получает новое воспоминание (координаты, название и комментарий) из формы.
+    # Возвращает координаты, название и комментарий нового воспоминания
+    geo_point = form.cleaned_data['geo_point']
+    location_latitude, location_longitude = geo_point.split(',')
+    location_name = form.cleaned_data['location_name']
+    comment = form.cleaned_data['comment']
+    return location_latitude, location_longitude, location_name, comment
+
+
+def save_new_memory_in_database(location_latitude,
+                                location_longitude,
+                                location_name,
+                                comment):
+    # Сохраняет координаты, название и комментарий нового воспоминания в БД
+    # Пока приписывает новые воспоминания конкретному пользователю (user_id=1)
+    memory = Memory(
+        location_latitude=location_latitude,
+        location_longitude=location_longitude,
+        location_name=location_name,
+        comment=comment,
+        user_id=1,
+    )
+    memory.save()
